@@ -5,10 +5,13 @@
 - Initial governance-foundation specification.
 - Repository bootstrap branch establishment.
 - Core architecture, standards, workflow, versioning, templates, roles, and prompt-governance foundation.
+- Foundation governance audit and targeted authority hardening.
+- Foundation pull-request review and merge into `main`.
 
 ## Active
 
-- Foundation validation and review prior to merge or release decisions.
+- Initial `0.1.0` release preparation and controlled release execution.
+- Downstream product-adoption planning against an exact released GrowthOS Engineering baseline.
 
 ## Proposed
 
@@ -25,8 +28,8 @@
 ## Not Approved
 
 - A `1.0.0` release.
-- Any Git tag or GitHub release.
-- Automatic merging or publication.
+- Any Git tag or GitHub release that has not passed explicit release authorization.
+- Automatic merging or publication without the required governance gates.
 - Product-specific Freelancer Growth OS logic in this repository.
 - Unverified claims about users, customers, adoption, revenue, deadlines, or release dates.
 

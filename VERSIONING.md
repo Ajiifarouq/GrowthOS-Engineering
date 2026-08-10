@@ -6,13 +6,15 @@ This document defines versioning, compatibility, migration, deprecation, tagging
 
 ## Repository Status
 
-Current repository status: **Unreleased**.
+Current repository status: **Active**.
 
-No released semantic version is assigned by this foundation.
+Current release candidate: **`0.1.0`**.
+
+No prior semantic version has been formally released. Release candidate `0.1.0` becomes a published release only when the immutable release tag `v0.1.0` and the corresponding GitHub release both target the exact approved release commit.
 
 ## Semantic Versioning
 
-Once formal releases begin, use semantic versioning in the form `MAJOR.MINOR.PATCH` when it accurately represents compatibility impact.
+Formal releases use semantic versioning in the form `MAJOR.MINOR.PATCH` when it accurately represents compatibility impact.
 
 - MAJOR: approved breaking change.
 - MINOR: backward-compatible capability or governance addition.
@@ -50,7 +52,7 @@ Deprecation communicates that an artifact remains available but should no longer
 
 ## Git Tags
 
-Tags represent approved release points only. Do not create or move a release tag without explicit release authority. Published release tags should be treated as immutable; correction normally requires a new release rather than rewriting history.
+Tags represent approved release points only. Release tags use the form `vMAJOR.MINOR.PATCH`. Do not create or move a release tag without explicit release authority. Published release tags are immutable; correction normally requires a new release rather than rewriting history.
 
 ## Release Withdrawal
 
