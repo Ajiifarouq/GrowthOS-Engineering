@@ -32,6 +32,7 @@ Agents must validate changed artifacts against applicable architecture, standard
 Without explicit authorization, agents must not:
 
 - commit or push changes;
+- create pull requests;
 - modify the default branch;
 - merge branches or pull requests;
 - create or move tags;

@@ -48,6 +48,10 @@ Prepare release notes, migration guidance, compatibility statements, version pro
 
 Perform only explicitly authorized publication actions such as merging, tagging, or creating a release. Each action retains its own authorization boundary.
 
+## Release Gate Integrity
+
+For a release candidate, all applicable prior gates are mandatory. Release execution must not be reached unless validation, quality review, required human approval, and release preparation have completed successfully and exact authorization exists for the release action being executed. If a normally applicable gate is treated as not applicable, that exception must be explicitly authorized and documented under the applicable governance rules.
+
 ## 12. Maintenance
 
 Triage feedback, defects, compatibility issues, deprecations, and new proposals through the same controlled lifecycle as appropriate.

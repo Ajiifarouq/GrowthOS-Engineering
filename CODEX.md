@@ -7,12 +7,12 @@ This document defines permanent authority and execution constraints for Codex an
 ## Authority Hierarchy
 
 1. Applicable law, platform safety controls, and organization-level security requirements.
-2. Explicit human authorization for the current task.
-3. Repository governance in this repository.
+2. Repository governance in this repository.
+3. Explicit task authorization from a human who has authority over the affected repository and protected action.
 4. Task-local implementation instructions.
 5. Agent-selected implementation details.
 
-Lower levels must not override higher levels.
+Lower levels must not override higher levels. Ordinary task authorization does not silently waive repository governance. A governance exception must be explicit, limited to the affected rule and action, issued by a human with authority over that repository and action, and documented when the governance framework requires an exception record.
 
 ## Human Authority
 
