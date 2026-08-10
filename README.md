@@ -1,7 +1,8 @@
 # GrowthOS Engineering
 
-**Status:** Unreleased  
+**Status:** Active  
 **Maturity:** Foundation  
+**Release candidate:** `0.1.0`  
 **Repository:** `Ajiifarouq/GrowthOS-Engineering`
 
 ## Purpose
@@ -28,7 +29,7 @@ GrowthOS product repositories may depend on and adopt governance from GrowthOS E
 - [MODULE_TEMPLATE.md](MODULE_TEMPLATE.md) — canonical module specification template.
 - [ROLE_LIBRARY.md](ROLE_LIBRARY.md) — reusable engineering roles.
 - [PROMPT_LIBRARY.md](PROMPT_LIBRARY.md) — reusable engineering prompt patterns.
-- [CHANGELOG.md](CHANGELOG.md) — unreleased change record.
+- [CHANGELOG.md](CHANGELOG.md) — release and unreleased change record.
 - [ROADMAP.md](ROADMAP.md) — governance roadmap.
 
 ## Source of Truth
@@ -37,4 +38,4 @@ For shared engineering governance, this repository is authoritative unless an ap
 
 ## Release State
 
-The repository is currently **Unreleased**. No semantic release version, Git tag, or release publication is implied by the existence of this foundation.
+This baseline is prepared as release candidate `0.1.0`. It is considered formally released only when the immutable release tag `v0.1.0` and the corresponding GitHub release both target the exact approved release commit. Until both publication steps are verified, `0.1.0` remains a release candidate rather than a published release.
