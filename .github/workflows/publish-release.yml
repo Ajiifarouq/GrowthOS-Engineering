@@ -1,0 +1,145 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Semantic version without v prefix, e.g. 0.1.0"
+        required: true
+        type: string
+      target_sha:
+        description: "Exact full commit SHA to release"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate release inputs
+        shell: bash
+        env:
+          VERSION: ${{ inputs.version }}
+          TARGET_SHA: ${{ inputs.target_sha }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid semantic version: $VERSION"
+            exit 1
+          fi
+
+          if [[ ! "$TARGET_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Target must be a full 40-character commit SHA."
+            exit 1
+          fi
+
+          git cat-file -e "${TARGET_SHA}^{commit}"
+
+          echo "TAG=v${VERSION}" >> "$GITHUB_ENV"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          echo "TARGET_SHA=${TARGET_SHA}" >> "$GITHUB_ENV"
+
+      - name: Verify exact release baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+
+          git merge-base --is-ancestor "$TARGET_SHA" origin/main || {
+            echo "Target SHA ${TARGET_SHA} is not contained in main."
+            exit 1
+          }
+
+          EXPECTED_README_MARKER="**Release candidate:** \`${VERSION}\`"
+          git show "${TARGET_SHA}:README.md" | grep -F -- "$EXPECTED_README_MARKER" >/dev/null || {
+            echo "README.md at ${TARGET_SHA} does not declare release candidate ${VERSION}."
+            exit 1
+          }
+
+          git show "${TARGET_SHA}:CHANGELOG.md" | grep -E -- "^## ${VERSION} - [0-9]{4}-[0-9]{2}-[0-9]{2}$" >/dev/null || {
+            echo "CHANGELOG.md at ${TARGET_SHA} does not contain a dated ${VERSION} release entry."
+            exit 1
+          }
+
+      - name: Prevent duplicate tag
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git ls-remote --exit-code \
+            --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists."
+            exit 1
+          fi
+
+      - name: Prevent duplicate release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          if gh release view "$TAG" \
+            --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists."
+            exit 1
+          fi
+
+      - name: Publish release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$TARGET_SHA" \
+            --title "GrowthOS Engineering ${VERSION}" \
+            --generate-notes
+
+      - name: Verify published release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          RELEASE_JSON="$(gh release view "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json tagName,isPrerelease)"
+
+          RELEASE_TAG="$(jq -r '.tagName' <<< "$RELEASE_JSON")"
+          IS_PRERELEASE="$(jq -r '.isPrerelease' <<< "$RELEASE_JSON")"
+
+          if [[ "$RELEASE_TAG" != "$TAG" ]]; then
+            echo "Published release tag mismatch."
+            exit 1
+          fi
+
+          if [[ "$IS_PRERELEASE" != "false" ]]; then
+            echo "Release ${TAG} was unexpectedly published as a prerelease."
+            exit 1
+          fi
+
+          git fetch --tags origin
+
+          RESOLVED_SHA="$(git rev-list -n 1 "$TAG")"
+
+          if [[ "$RESOLVED_SHA" != "$TARGET_SHA" ]]; then
+            echo "Release tag points to ${RESOLVED_SHA}, expected ${TARGET_SHA}."
+            exit 1
+          fi
+
+          echo "Release ${TAG} successfully verified at ${TARGET_SHA}."
